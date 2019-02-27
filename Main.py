@@ -13,4 +13,5 @@ date = '2017-01-01T00:00:00'
 r = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, date) + 
                  '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags')
 raw = r.json()
-df = json_normalize(raw['daily']['data'])
+df = pd.concat([json_normalize(raw), json_normalize(raw['daily']['data'])], axis=1)
+df['daily.data'] = re.search('time\': (.+?),', str(df.iloc[0, 0])).group(1)
