@@ -12,4 +12,5 @@ longitude = -56.165
 date = '2017-01-01T00:00:00'
 r = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, date) + 
                  '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags')
-pprint(r.json())
+raw = r.json()
+df = json_normalize(raw['daily']['data'])
