@@ -1,8 +1,7 @@
-from pprint import pprint
 from pandas.io.json import json_normalize
 import pandas as pd
 import requests
-import json
+import re
 
 with open('API key.txt','r') as key:
     key = key.read()
