@@ -23,14 +23,11 @@ for i in date:
     df_raw.append(df_date)
 df = pd.concat(df_raw, axis=0, ignore_index=True, sort=False)
 
-df = []
-for i in vars:
-    df_aux = pd.DataFrame({'Date': [date],
-                 i: [raw['daily']['data'][0][i]],
-                }).set_index('Date')
-    df.append(df_aux)
-
-df1 = pd.concat(df, axis=1)
-df1['Latitude'] = latitude
-df1['Longitude'] = longitude
-df1['time'] = pd.to_datetime(df1['time'], unit='s')
+df_proc = df
+df_proc['Latitude'] = latitude
+df_proc['Longitude'] = longitude
+df_proc['time'] = pd.to_datetime(df_proc['time'], unit='s')
+df_proc = df_proc[['time','Latitude','Longitude','temperatureHigh','temperatureLow','temperatureMax',
+        'temperatureMin','apparentTemperatureHigh','apparentTemperatureLow','apparentTemperatureMax',
+        'apparentTemperatureMin','precipIntensity','precipIntensityMax','precipProbability','humidity',
+        'windGust','windSpeed','summary']]
