@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import json
+from pandas.io.json import json_normalize
 
 with open('API key.txt','r') as key:
     key = key.read()
@@ -16,9 +17,11 @@ for i in date:
     reqs_aux = json.loads(get)
     raw.append(reqs_aux)
 
-vars = ['time','summary','temperatureMin','temperatureMax','apparentTemperatureMin',
-        'apparentTemperatureMax','precipIntensity','precipIntensityMax',
-        'precipProbability','cloudCover','humidity','windSpeed','windGust']
+df_raw = []
+for i in date:
+    df_date = json_normalize(raw[date.index(i)]['daily']['data'])
+    df_raw.append(df_date)
+df = pd.concat(df_raw, axis=0, ignore_index=True, sort=False)
 
 df = []
 for i in vars:
