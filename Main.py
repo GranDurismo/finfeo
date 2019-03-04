@@ -9,9 +9,12 @@ latitude = -34.915
 longitude = -56.165
 date = ['2017-01-01T00:00:00', '2016-01-01T00:00:00']
 
-r = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, date) + 
-                 '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags').text
-raw = json.loads(r)
+raw = []
+for i in date:
+    get = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, i) + 
+                     '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags').text
+    reqs_aux = json.loads(get)
+    raw.append(reqs_aux)
 
 vars = ['time','summary','temperatureMin','temperatureMax','apparentTemperatureMin',
         'apparentTemperatureMax','precipIntensity','precipIntensityMax',
