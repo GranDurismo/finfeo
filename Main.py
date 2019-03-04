@@ -7,7 +7,7 @@ with open('API key.txt','r') as key:
     
 latitude = -34.915
 longitude = -56.165
-date = '2017-01-01T00:00:00'
+date = ['2017-01-01T00:00:00', '2016-01-01T00:00:00']
 
 r = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, date) + 
                  '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags').text
