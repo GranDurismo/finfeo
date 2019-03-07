@@ -5,8 +5,8 @@ import json
 from pandas.io.json import json_normalize
 from datetime import date, timedelta
 
-with open('API key.txt','r') as key:
-    key = key.read()
+with open('API_key.txt','r') as f:
+    key = f.read()
     
 latitude = -34.915
 longitude = -56.165
