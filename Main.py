@@ -12,8 +12,8 @@ latitude = -34.915
 longitude = -56.165
 
 date_end = date(2018, 12, 31)
-num_days = 950
-num_chunks = 5
+num_days = 3
+num_chunks = 2
 
 date_list = [date_end - timedelta(days=x) for x in range(0, num_days*num_chunks)]
 date_chunks = np.array_split(date_list, num_chunks)
