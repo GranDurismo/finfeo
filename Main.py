@@ -7,13 +7,13 @@ from datetime import date, timedelta
 
 latitude = -34.915
 longitude = -56.165
-time_suffix = 'T00:00:00'
-darksky_url = 'https://api.darksky.net/forecast/'
-darksky_suffix = '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags'
-
 date_end = date(2018, 12, 31)
 num_days = 3
 num_chunks = 2
+
+time_suffix = 'T00:00:00'
+darksky_url = 'https://api.darksky.net/forecast'
+darksky_suffix = '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags'
 
 with open('API_key.txt','r') as f:
     key = f.read()
@@ -24,9 +24,8 @@ date_chunks = np.array_split(date_list_str, num_chunks)
 
 raw = []
 for i in range(0, num_chunks):
-    for j in date_chunks[i]:
-        get = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, j) + 
-                     '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags').text
+    for dates in date_chunks[i]:
+        get = requests.get(f'{darksky_url}/{key}/{latitude},{longitude},{dates}{darksky_suffix}').text
         reqs_aux = json.loads(get)
         raw.append(reqs_aux)
 
