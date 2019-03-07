@@ -5,17 +5,19 @@ import json
 from pandas.io.json import json_normalize
 from datetime import date, timedelta
 
-with open('API_key.txt','r') as f:
-    key = f.read()
-    
 latitude = -34.915
 longitude = -56.165
 time_suffix = 'T00:00:00'
+darksky_url = 'https://api.darksky.net/forecast/'
+darksky_suffix = '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags'
 
 date_end = date(2018, 12, 31)
 num_days = 3
 num_chunks = 2
 
+with open('API_key.txt','r') as f:
+    key = f.read()
+    
 date_list = [date_end - timedelta(days=x) for x in range(0, num_days*num_chunks)]
 date_list_str = [str(x) + time_suffix for x in date_list]
 date_chunks = np.array_split(date_list_str, num_chunks)
