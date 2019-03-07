@@ -21,11 +21,12 @@ date_list_str = [str(x) + time_suffix for x in date_list]
 date_chunks = np.array_split(date_list_str, num_chunks)
 
 raw = []
-for i in date:
-    get = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, i) + 
+for i in range(0, num_chunks):
+    for j in date_chunks[i]:
+        get = requests.get('https://api.darksky.net/forecast/%s/%s,%s,%s' %(key, latitude, longitude, j) + 
                      '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags').text
-    reqs_aux = json.loads(get)
-    raw.append(reqs_aux)
+        reqs_aux = json.loads(get)
+        raw.append(reqs_aux)
 
 df_raw = []
 for i in date:
