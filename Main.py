@@ -10,13 +10,15 @@ with open('API key.txt','r') as key:
     
 latitude = -34.915
 longitude = -56.165
+time_suffix = 'T00:00:00'
 
 date_end = date(2018, 12, 31)
 num_days = 3
 num_chunks = 2
 
 date_list = [date_end - timedelta(days=x) for x in range(0, num_days*num_chunks)]
-date_chunks = np.array_split(date_list, num_chunks)
+date_list_str = [str(x) + time_suffix for x in date_list]
+date_chunks = np.array_split(date_list_str, num_chunks)
 
 raw = []
 for i in date:
