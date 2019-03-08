@@ -5,7 +5,8 @@ import pickle
 from pandas.io.json import json_normalize
 import datetime as dt
 
-#%%
+#%% Set defaults
+# Coordinates for Montevideo
 latitude = -34.915
 longitude = -56.165
 first_date = dt.date(2018, 12, 31)
@@ -15,7 +16,7 @@ time_suffix = "T00:00:00"
 darksky_url = "https://api.darksky.net/forecast"
 darksky_suffix = "?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags"
 
-#%%
+#%% Get API key and define request loop
 with open("API_key.txt", "r") as f:
     key = f.read()
 
@@ -29,10 +30,11 @@ def request_loop(date_start, raw_arg):
         ).text
         reqs_aux = json.loads(get)
         raw_arg.append(reqs_aux)
+    # Pickle requested dates so they are not requested again
     pickle.dump(raw_arg, open("raw.p", "wb"))
 
-
-#%%
+#%% If requests have been pickled, get the earliest date and rerun
+    # loop
 try:
     raw = pickle.load(open("raw.p", "rb"))
 except:
@@ -47,11 +49,11 @@ else:
     first_date = min(date_aux) - dt.timedelta(days=1)
     request_loop(first_date, raw)
 
-#%%
+#%% Parse requests into dataframes and concatenate
 df = [json_normalize(x["daily"]["data"]) for x in raw]
 df = pd.concat(df, axis=0, ignore_index=True, sort=False)
 
-#%%
+#%% Include coordinates in dataframe, convert time and drop unneeded columns
 df_proc = df
 df_proc["Latitude"] = latitude
 df_proc["Longitude"] = longitude
