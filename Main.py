@@ -3,11 +3,11 @@ import requests
 import json
 import pickle
 from pandas.io.json import json_normalize
-from datetime import date, timedelta
+import datetime as dt
 
 latitude = -34.915
 longitude = -56.165
-first_date = date(2018, 12, 31)
+first_date = dt.date(2018, 12, 31)
 num_days = 6
 
 time_suffix = 'T00:00:00'
@@ -17,24 +17,32 @@ darksky_suffix = '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,fla
 with open('API_key.txt','r') as f:
     key = f.read()
 
-def request_loop(date_start, raw, df):
-    date_list = [date_start - timedelta(days=x) for x in range(0, num_days)]
+def request_loop(date_start, raw_arg, df_arg):
+    date_list = [date_start - dt.timedelta(days=x) for x in range(0, num_days)]
     date_list_str = [str(x) + time_suffix for x in date_list]
     for dates in date_list_str:
         get = requests.get(f'{darksky_url}/{key}/{latitude},{longitude},{dates}{darksky_suffix}').text
         reqs_aux = json.loads(get)
-        raw.append(reqs_aux)
-        df_date = json_normalize(raw[date_list_str.index(dates)]['daily']['data'])
-        df.append(df_date)
-    df = pd.concat(df, axis=0, ignore_index=True, sort=False)
-    pickle.dump(raw, open('raw.p', 'wb'))
-    pickle.dump(df, open('df.p', 'wb'))
+        raw_arg.append(reqs_aux)
+        df_date = json_normalize(raw_arg[date_list_str.index(dates)]['daily']['data'])
+        df_arg.append(df_date)
+    pickle.dump(raw_arg, open('raw.p', 'wb'))
+    pickle.dump(df_arg, open('df.p', 'wb'))
     
-df_raw = []
-for i in date:
-    df_date = json_normalize(raw[date.index(i)]['daily']['data'])
-    df_raw.append(df_date)
-df = pd.concat(df_raw, axis=0, ignore_index=True, sort=False)
+try:
+    df = pickle.load(open('df.p', 'rb'))
+    raw = pickle.load(open('raw.p', 'rb'))
+except:
+    print('No previous data')
+    df = []
+    raw = []
+    request_loop(first_date, raw, df)
+else:
+    print('Using previously loaded data')
+    df_aux = pd.concat(df, axis=0, ignore_index=True, sort=False)
+    first_date = dt.datetime.utcfromtimestamp(min(df_aux['time'])).date() - dt.timedelta(days=1)
+    request_loop(first_date, raw, df)
+    df = pd.concat(df, axis=0, ignore_index=True, sort=False)    
 
 df_proc = df
 df_proc['Latitude'] = latitude
