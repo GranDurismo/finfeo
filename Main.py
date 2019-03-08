@@ -17,32 +17,29 @@ darksky_suffix = '?lang=es&units=si&exclude=currently,minutely,hourly,alerts,fla
 with open('API_key.txt','r') as f:
     key = f.read()
 
-def request_loop(date_start, raw_arg, df_arg):
+def request_loop(date_start, raw_arg):
     date_list = [date_start - dt.timedelta(days=x) for x in range(0, num_days)]
     date_list_str = [str(x) + time_suffix for x in date_list]
     for dates in date_list_str:
         get = requests.get(f'{darksky_url}/{key}/{latitude},{longitude},{dates}{darksky_suffix}').text
         reqs_aux = json.loads(get)
         raw_arg.append(reqs_aux)
-        df_date = json_normalize(raw_arg[date_list_str.index(dates)]['daily']['data'])
-        df_arg.append(df_date)
     pickle.dump(raw_arg, open('raw.p', 'wb'))
-    pickle.dump(df_arg, open('df.p', 'wb'))
     
 try:
-    df = pickle.load(open('df.p', 'rb'))
     raw = pickle.load(open('raw.p', 'rb'))
 except:
     print('No previous data')
-    df = []
     raw = []
-    request_loop(first_date, raw, df)
+    request_loop(first_date, raw)
 else:
     print('Using previously loaded data')
-    df_aux = pd.concat(df, axis=0, ignore_index=True, sort=False)
-    first_date = dt.datetime.utcfromtimestamp(min(df_aux['time'])).date() - dt.timedelta(days=1)
-    request_loop(first_date, raw, df)
-    df = pd.concat(df, axis=0, ignore_index=True, sort=False)    
+    date_aux = [dt.datetime.utcfromtimestamp(y['daily']['data'][0]['time']).date() for y in raw]
+    first_date = min(date_aux) - dt.timedelta(days=1)
+    request_loop(first_date, raw) 
+
+df = [json_normalize(x['daily']['data']) for x in raw]
+df = pd.concat(df, axis=0, ignore_index=True, sort=False)
 
 df_proc = df
 df_proc['Latitude'] = latitude
