@@ -7,8 +7,6 @@ from pandas.io.json import json_normalize
 from geopy.geocoders import Nominatim
 
 #%% Set defaults
-first_date = dt.date(2018, 12, 31)
-num_days = 6
 darksky_url = "https://api.darksky.net/forecast"
 darksky_suffix = "?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags"
 time_suffix = "T00:00:00"
@@ -20,6 +18,8 @@ coordinates = geoloc.geocode(user_location)
 latitude = coordinates.latitude
 longitude = coordinates.longitude
 
+first_date = dt.date(2018, 12, 31)
+requests_per_loop = 6
 
 #%% Get API key and define request loop
 with open("API_key.txt", "r") as f:
