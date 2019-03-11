@@ -11,16 +11,15 @@ from geopy.geocoders import Nominatim
 darksky_url = "https://api.darksky.net/forecast"
 darksky_suffix = "?lang=es&units=si&exclude=currently,minutely,hourly,alerts,flags"
 time_suffix = "T00:00:00"
+first_date = dt.date(2018, 12, 31)
+requests_per_loop = 6
 
 # Allow user to choose location and get coordinates
 user_location = input("Set your desired location: ")
 geoloc = Nominatim(user_agent="finfeo")
 coordinates = geoloc.geocode(user_location)
-latitude = coordinates.latitude
-longitude = coordinates.longitude
-
-first_date = dt.date(2018, 12, 31)
-requests_per_loop = 6
+latitude, longitude = coordinates.latitude, coordinates.longitude
+location = coordinates.address
 
 #%% Get API key and define request loop
 
